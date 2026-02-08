@@ -1,0 +1,739 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Santorini Match 💙</title>
+  <style>
+    :root{
+      --sky1:#c9efff; --sky2:#86d0ff;
+      --sea1:#0b76d6; --sea2:#083f8c;
+      --white:#fff; --stone:#f3ede6;
+      --blue:#2d6cff; --pink:#ff4d8d;
+      --shadow: rgba(0,0,0,.18);
+      --glass1: rgba(255,255,255,.75);
+      --glass2: rgba(255,255,255,.45);
+      --ink:#0b1320;
+    }
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      min-height:100svh;
+      font-family: ui-rounded, system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      color:var(--ink);
+      background: radial-gradient(1200px 700px at 50% -10%, var(--sky1), var(--sky2));
+      overflow-x:hidden;
+    }
+    .wrap{
+      width:min(980px, 100%);
+      margin:0 auto;
+      padding:16px;
+    }
+
+    /* Top */
+    header{
+      display:flex;
+      gap:12px;
+      flex-wrap:wrap;
+      align-items:stretch;
+      justify-content:space-between;
+      margin-bottom:12px;
+    }
+    .badge, .pill{
+      background: linear-gradient(180deg, var(--glass1), var(--glass2));
+      backdrop-filter: blur(10px);
+      border:1px solid rgba(255,255,255,.55);
+      box-shadow: 0 12px 34px var(--shadow);
+    }
+    .badge{
+      border-radius:20px;
+      padding:12px 14px;
+      flex: 1 1 420px;
+      min-width: 280px;
+    }
+    .badge h1{
+      margin:0;
+      font-size: clamp(18px, 3.6vw, 24px);
+      letter-spacing:.2px;
+      line-height:1.15;
+    }
+    .badge p{
+      margin:8px 0 0;
+      font-size: clamp(12px, 2.8vw, 14px);
+      opacity:.92;
+    }
+    .stats{
+      display:flex;
+      gap:10px;
+      flex: 0 0 auto;
+      align-items:stretch;
+      justify-content:flex-end;
+      flex-wrap:wrap;
+    }
+    .pill{
+      border-radius:999px;
+      padding:10px 12px;
+      min-width: 140px;
+      text-align:center;
+      user-select:none;
+    }
+    .pill b{ display:block; font-size:14px; }
+    .pill span{ display:block; font-size:12px; opacity:.85; margin-top:2px; }
+
+    /* Scene card */
+    .scene{
+      position:relative;
+      border-radius:22px;
+      overflow:hidden;
+      border:1px solid rgba(255,255,255,.6);
+      box-shadow: 0 28px 70px rgba(0,0,0,.22);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,.14), rgba(255,255,255,.06));
+      padding: 16px;
+    }
+
+    /* Background illustration (CSS only) */
+    .bg{
+      position:absolute;
+      inset:0;
+      pointer-events:none;
+      z-index:0;
+    }
+    .sun{
+      position:absolute;
+      left:7%;
+      top:10%;
+      width:110px; height:110px;
+      border-radius:50%;
+      background: radial-gradient(circle at 30% 30%, rgba(255,245,190,.95), rgba(255,245,190,.1) 60%);
+      filter: blur(.2px);
+      opacity:.95;
+    }
+    .sea{
+      position:absolute;
+      left:0; right:0;
+      bottom:0;
+      height:46%;
+      background: linear-gradient(180deg, var(--sea1), var(--sea2));
+    }
+    .island{
+      position:absolute;
+      left:-10%;
+      right:-10%;
+      bottom:34%;
+      height:20%;
+      background: rgba(13,27,42,.18);
+      border-top-left-radius: 60% 80%;
+      border-top-right-radius: 50% 80%;
+      filter: blur(.2px);
+    }
+    .chapel{
+      position:absolute;
+      right:7%;
+      top:14%;
+      width:280px;
+      height:170px;
+      opacity:.95;
+    }
+    .chapel .base{
+      position:absolute; left:0; right:0; bottom:0;
+      height:105px;
+      background: rgba(255,255,255,.95);
+      border-radius:18px;
+      box-shadow: inset 0 -8px 0 rgba(0,0,0,.06);
+      border:1px solid rgba(0,0,0,.06);
+    }
+    .chapel .tower{
+      position:absolute; left:10px; bottom:55px;
+      width:76px; height:86px;
+      background: rgba(255,255,255,.95);
+      border-radius:18px;
+      border:1px solid rgba(0,0,0,.06);
+      box-shadow: inset 0 -8px 0 rgba(0,0,0,.06);
+    }
+    .chapel .tower:before{
+      content:"";
+      position:absolute; left:16px; top:22px;
+      width:44px; height:40px;
+      border-radius:14px;
+      background: rgba(13,27,42,.10);
+    }
+    .chapel .cross{
+      position:absolute; left:48px; top:-8px;
+      width:4px; height:30px;
+      background: rgba(13,27,42,.18);
+      border-radius:2px;
+    }
+    .chapel .cross:before{
+      content:"";
+      position:absolute; left:-10px; top:10px;
+      width:24px; height:4px;
+      background: rgba(13,27,42,.18);
+      border-radius:2px;
+    }
+    .chapel .dome{
+      position:absolute; right:45px; bottom:78px;
+      width:110px; height:80px;
+      background: rgba(45,108,255,.92);
+      border-radius: 60px 60px 18px 18px;
+      border:2px solid rgba(255,255,255,.55);
+      box-shadow: inset 0 -10px 0 rgba(0,0,0,.08);
+    }
+    .chapel .dome:before{
+      content:"";
+      position:absolute; left:50%; top:-12px;
+      transform: translateX(-50%);
+      width:16px; height:16px;
+      border-radius:50%;
+      background: rgba(255,255,255,.92);
+    }
+    .chapel .door{
+      position:absolute; left:110px; bottom:18px;
+      width:56px; height:74px;
+      border-radius:14px;
+      background: rgba(13,27,42,.68);
+      border:2px solid rgba(255,255,255,.55);
+    }
+    .chapel .boug{
+      position:absolute; left:92px; bottom:72px;
+      width:80px; height:52px;
+      filter: drop-shadow(0 6px 10px rgba(0,0,0,.10));
+    }
+    .boug i{
+      position:absolute;
+      width:16px; height:16px;
+      background: rgba(217,59,122,.85);
+      border-radius: 10px 10px 10px 2px;
+      transform: rotate(18deg);
+    }
+    .boug i:nth-child(1){ left:6px; top:22px; }
+    .boug i:nth-child(2){ left:18px; top:12px; }
+    .boug i:nth-child(3){ left:30px; top:22px; }
+    .boug i:nth-child(4){ left:42px; top:10px; }
+    .boug i:nth-child(5){ left:54px; top:24px; }
+
+    /* Content layout */
+    .content{
+      position:relative;
+      z-index:1;
+      display:grid;
+      grid-template-columns: 1.05fr .95fr;
+      gap:14px;
+      align-items:start;
+    }
+    @media (max-width: 860px){
+      .content{ grid-template-columns: 1fr; }
+      .chapel{ display:none; }
+    }
+
+    .panel{
+      background: linear-gradient(180deg, rgba(255,255,255,.86), rgba(255,255,255,.60));
+      border:1px solid rgba(255,255,255,.65);
+      border-radius:18px;
+      box-shadow: 0 18px 46px rgba(0,0,0,.18);
+      padding:14px;
+    }
+    .panel h2{
+      margin:0 0 6px 0;
+      font-size:18px;
+      letter-spacing:.2px;
+    }
+    .panel p{
+      margin:0;
+      font-size:13px;
+      opacity:.9;
+      line-height:1.35;
+    }
+
+    /* Game board */
+    .boardWrap{
+      background: linear-gradient(180deg, rgba(255,255,255,.18), rgba(255,255,255,.08));
+      border: 1px solid rgba(255,255,255,.40);
+      border-radius:18px;
+      padding:12px;
+    }
+    .board{
+      display:grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap:10px;
+    }
+    @media (max-width: 460px){
+      .board{ grid-template-columns: repeat(3, 1fr); }
+    }
+
+    .card{
+      position:relative;
+      aspect-ratio: 1 / 1;
+      border-radius:16px;
+      perspective: 900px;
+      user-select:none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .inner{
+      position:absolute;
+      inset:0;
+      border-radius:16px;
+      transform-style: preserve-3d;
+      transition: transform .35s cubic-bezier(.2,.9,.25,1);
+      box-shadow: 0 14px 30px rgba(0,0,0,.18);
+    }
+    .card.flipped .inner{ transform: rotateY(180deg); }
+    .face{
+      position:absolute; inset:0;
+      border-radius:16px;
+      backface-visibility:hidden;
+      display:grid;
+      place-items:center;
+      border:1px solid rgba(255,255,255,.65);
+    }
+    .front{
+      background: linear-gradient(180deg, rgba(255,255,255,.88), rgba(255,255,255,.55));
+    }
+    .front:before{
+      content:"";
+      width:58%;
+      height:58%;
+      border-radius:18px;
+      border:2px dashed rgba(45,108,255,.35);
+      transform: rotate(8deg);
+      opacity:.85;
+    }
+    .back{
+      transform: rotateY(180deg);
+      background: linear-gradient(180deg, rgba(255,255,255,.92), rgba(255,255,255,.65));
+      overflow:hidden;
+    }
+    .icon{
+      font-size: clamp(28px, 6.2vw, 44px);
+      filter: drop-shadow(0 8px 10px rgba(0,0,0,.10));
+    }
+    .label{
+      position:absolute;
+      bottom:10px;
+      left:10px;
+      right:10px;
+      font-size:12px;
+      opacity:.85;
+      text-align:center;
+      padding:6px 8px;
+      border-radius:999px;
+      background: rgba(255,255,255,.55);
+      border:1px solid rgba(0,0,0,.06);
+    }
+
+    .row{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:12px;
+    }
+    .btn{
+      flex:1 1 160px;
+      padding:12px 12px;
+      border-radius:14px;
+      border:1px solid rgba(0,0,0,.10);
+      background: linear-gradient(180deg, rgba(255,255,255,.92), rgba(255,255,255,.66));
+      box-shadow: 0 12px 26px rgba(0,0,0,.16);
+      font-weight:800;
+      cursor:pointer;
+      touch-action: manipulation;
+    }
+    .btn.primary{
+      background: linear-gradient(180deg, rgba(255,77,141,.95), rgba(255,77,141,.70));
+      color:white;
+      border:1px solid rgba(255,255,255,.30);
+    }
+    .btn:active{ transform: translateY(1px); }
+
+    .note{
+      margin-top:10px;
+      font-size:12px;
+      opacity:.82;
+      line-height:1.35;
+    }
+
+    /* Toast */
+    .toast{
+      position:absolute;
+      left:50%;
+      top:12px;
+      transform: translateX(-50%);
+      background: rgba(255,255,255,.80);
+      border:1px solid rgba(255,255,255,.6);
+      border-radius:999px;
+      padding:10px 12px;
+      box-shadow: 0 14px 34px rgba(0,0,0,.22);
+      backdrop-filter: blur(8px);
+      z-index:5;
+      display:none;
+      font-size:13px;
+      user-select:none;
+      max-width: calc(100% - 24px);
+      text-align:center;
+    }
+    .toast.show{ display:block; }
+
+    /* Invite overlay */
+    .overlay{
+      position:fixed;
+      inset:0;
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding:18px;
+      background: rgba(7, 14, 26, .48);
+      z-index:50;
+    }
+    .overlay.show{ display:flex; }
+    .invite{
+      width:min(560px, 100%);
+      border-radius:22px;
+      background: linear-gradient(180deg, rgba(255,255,255,.94), rgba(255,255,255,.72));
+      border:1px solid rgba(255,255,255,.75);
+      box-shadow: 0 30px 90px rgba(0,0,0,.35);
+      padding:18px;
+      position:relative;
+      overflow:hidden;
+    }
+    .invite:before{
+      content:"";
+      position:absolute;
+      inset:-80px -80px auto auto;
+      width:260px; height:260px;
+      background: radial-gradient(circle at 30% 30%, rgba(255,77,141,.35), rgba(255,77,141,0) 62%);
+      transform: rotate(15deg);
+    }
+    .invite h3{
+      margin:0 0 8px 0;
+      font-size:22px;
+      position:relative;
+      z-index:2;
+    }
+    .invite p{
+      margin:0 0 12px 0;
+      line-height:1.35;
+      position:relative;
+      z-index:2;
+      opacity:.95;
+    }
+    .chips{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin:10px 0 14px;
+      position:relative;
+      z-index:2;
+    }
+    .chip{
+      border-radius:999px;
+      padding:8px 10px;
+      border:1px dashed rgba(13,27,42,.25);
+      background: rgba(255,255,255,.55);
+      font-size:12.5px;
+    }
+    .actions{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      position:relative;
+      z-index:2;
+      align-items:center;
+    }
+    .cta{
+      flex:1 1 210px;
+      padding:12px 14px;
+      border-radius: 14px;
+      border:1px solid rgba(0,0,0,.08);
+      background: linear-gradient(180deg, #ffffff, rgba(255,255,255,.7));
+      box-shadow: 0 12px 26px rgba(0,0,0,.18);
+      font-weight:900;
+      cursor:pointer;
+      touch-action: manipulation;
+    }
+    .cta.yes{
+      background: linear-gradient(180deg, rgba(255,77,141,.95), rgba(255,77,141,.70));
+      color:white;
+      border:1px solid rgba(255,255,255,.35);
+    }
+
+    .credits{
+      margin-top:10px;
+      font-size:12px;
+      opacity:.78;
+      position:relative;
+      z-index:2;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="badge">
+        <h1>Nikos liebesspiel 😛</h1>
+        <p>Finde alle Paare (Kapelle, Kuppel, Oliven & mehr). Wenn du alles geschafft hast, wartet etwas Süßes auf dich…</p>
+      </div>
+      <div class="stats">
+        <div class="pill"><b id="pairs">0/8</b><span>Paare</span></div>
+        <div class="pill"><b id="moves">0</b><span>Züge</span></div>
+      </div>
+    </header>
+
+    <div class="scene">
+      <div class="bg">
+        <div class="sun"></div>
+        <div class="chapel" aria-hidden="true">
+          <div class="tower"></div>
+          <div class="cross"></div>
+          <div class="base"></div>
+          <div class="dome"></div>
+          <div class="door"></div>
+          <div class="boug">
+            <i></i><i></i><i></i><i></i><i></i>
+          </div>
+        </div>
+        <div class="island"></div>
+        <div class="sea"></div>
+      </div>
+
+      <div class="toast" id="toast"></div>
+
+      <div class="content">
+        <div class="panel">
+          <h2>So geht’s</h2>
+          <p>
+            Tippe zwei Karten an, um sie aufzudecken. Wenn sie gleich sind: <b>Match!</b><br/>
+            Schaffst du alle Paare, öffnet sich “die Kapelle” → Einladung 🕊️💖
+          </p>
+          <div class="row">
+            <button class="btn primary" id="newGame">Neu mischen</button>
+            <button class="btn" id="reveal">Kurzer Blick (1s)</button>
+          </div>
+          <div class="note">
+            Tipp: Auf Handy einfach tippen. Auf PC klicken. Keine komische Skalierung mehr 😉
+          </div>
+        </div>
+
+        <div class="boardWrap">
+          <div class="board" id="board" aria-label="Memory Spielfeld"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Einladung -->
+  <div class="overlay" id="overlay" role="dialog" aria-modal="true">
+    <div class="invite">
+      <h3 id="inviteTitle">💌 Einladung</h3>
+      <p id="inviteText">Text</p>
+
+      <div class="chips">
+        <div class="chip">📅 <span id="dateChip">14. Februar</span></div>
+        <div class="chip">⏰ <span id="timeChip">19:00</span></div>
+        <div class="chip">📍 <span id="placeChip">Überraschung</span></div>
+      </div>
+
+      <div class="actions">
+        <button class="cta yes" id="yesBtn">Ja 💖</button>
+        <button class="cta" id="noBtn">Nein 🙈</button>
+      </div>
+
+      <div class="credits" id="credits">(Wenn “Nein”… naja… du kennst mich 😄)</div>
+    </div>
+  </div>
+
+  <script>
+    // ======= PERSONALISIEREN (nur diese Zeilen ändern) =======
+    const PERSON = "Vanessa";              // z.B. "Lena"
+    const MYNAME = "Niko (Monkey)";                 // z.B. "Niko"
+    const DATE_TEXT = "14. Februar";
+    const TIME_TEXT = "12:00";
+    const PLACE_TEXT = "Überraschung (Schweriner Schloss)";
+    const INVITE_LINE = "Willst du am Valentinstag mit mir auf ein Date gehen?";
+    // =========================================================
+
+    const ICONS = [
+      { key:"chapel", icon:"⛪", label:"Kapelle" },
+      { key:"dome", icon:"🔵", label:"Blaue Kuppel" },
+      { key:"heart", icon:"💗", label:"Herz" },
+      { key:"olive", icon:"🫒", label:"Olive" },
+      { key:"flower", icon:"🌺", label:"Bougainvillea" },
+      { key:"bell", icon:"🔔", label:"Glocke" },
+      { key:"star", icon:"✨", label:"Funken" },
+      { key:"sea", icon:"🌊", label:"Ägäis" },
+    ];
+
+    const boardEl = document.getElementById("board");
+    const pairsEl = document.getElementById("pairs");
+    const movesEl = document.getElementById("moves");
+    const toastEl = document.getElementById("toast");
+
+    const overlay = document.getElementById("overlay");
+    const yesBtn = document.getElementById("yesBtn");
+    const noBtn = document.getElementById("noBtn");
+
+    document.getElementById("dateChip").textContent = DATE_TEXT;
+    document.getElementById("timeChip").textContent = TIME_TEXT;
+    document.getElementById("placeChip").textContent = PLACE_TEXT;
+    document.getElementById("inviteTitle").textContent = `💌 ${PERSON}, ich muss dich was fragen…`;
+    document.getElementById("inviteText").innerHTML =
+      `Du hast alle Paare gefunden – also:<br><b>${INVITE_LINE}</b><br><br>— ${MYNAME}`;
+
+    let deck = [];
+    let first = null;
+    let second = null;
+    let lock = false;
+
+    let moves = 0;
+    let matchedPairs = 0;
+
+    function showToast(msg, ms=1800){
+      toastEl.textContent = msg;
+      toastEl.classList.add("show");
+      clearTimeout(showToast._t);
+      showToast._t = setTimeout(()=>toastEl.classList.remove("show"), ms);
+    }
+
+    function shuffle(arr){
+      for(let i=arr.length-1;i>0;i--){
+        const j = Math.floor(Math.random()*(i+1));
+        [arr[i],arr[j]]=[arr[j],arr[i]];
+      }
+      return arr;
+    }
+
+    function buildDeck(){
+      const doubled = [];
+      for(const it of ICONS){
+        doubled.push({ ...it, id: it.key+"-a" });
+        doubled.push({ ...it, id: it.key+"-b" });
+      }
+      return shuffle(doubled);
+    }
+
+    function render(){
+      boardEl.innerHTML = "";
+      for(const card of deck){
+        const el = document.createElement("button");
+        el.className = "card";
+        el.type = "button";
+        el.setAttribute("aria-label", "Karte");
+        el.dataset.key = card.key;
+        el.dataset.id = card.id;
+
+        el.innerHTML = `
+          <div class="inner">
+            <div class="face front"></div>
+            <div class="face back">
+              <div class="icon">${card.icon}</div>
+              <div class="label">${card.label}</div>
+            </div>
+          </div>
+        `;
+
+        el.addEventListener("click", ()=>onPick(el));
+        boardEl.appendChild(el);
+      }
+    }
+
+    function setStats(){
+      pairsEl.textContent = `${matchedPairs}/8`;
+      movesEl.textContent = `${moves}`;
+    }
+
+    function flip(el, on){
+      el.classList.toggle("flipped", on);
+    }
+
+    function resetPicks(){
+      first = null;
+      second = null;
+      lock = false;
+    }
+
+    function onPick(el){
+      if(lock) return;
+      if(el.classList.contains("matched")) return;
+      if(el === first) return;
+
+      flip(el, true);
+
+      if(!first){
+        first = el;
+        return;
+      }
+
+      second = el;
+      lock = true;
+      moves++;
+      setStats();
+
+      const a = first.dataset.key;
+      const b = second.dataset.key;
+
+      if(a === b){
+        first.classList.add("matched");
+        second.classList.add("matched");
+        matchedPairs++;
+        setStats();
+        showToast("Match! 💙");
+
+        setTimeout(()=>{
+          resetPicks();
+          if(matchedPairs === ICONS.length){
+            showToast("✨ Geschafft! Warte kurz…", 2200);
+            setTimeout(()=>overlay.classList.add("show"), 900);
+          }
+        }, 420);
+      } else {
+        setTimeout(()=>{
+          flip(first, false);
+          flip(second, false);
+          resetPicks();
+        }, 650);
+      }
+    }
+
+    function newGame(){
+      deck = buildDeck();
+      first = null; second = null; lock = false;
+      moves = 0; matchedPairs = 0;
+      setStats();
+      render();
+      showToast("Neu gemischt 🌊", 1400);
+    }
+
+    document.getElementById("newGame").addEventListener("click", newGame);
+
+    document.getElementById("reveal").addEventListener("click", ()=>{
+      const cards = [...document.querySelectorAll(".card")];
+      cards.forEach(c=>flip(c,true));
+      setTimeout(()=>cards.forEach(c=>{
+        if(!c.classList.contains("matched")) flip(c,false);
+      }), 1000);
+    });
+
+    yesBtn.addEventListener("click", ()=>{
+      overlay.classList.remove("show");
+      showToast("Geil, dann steht ein Date fest. 💖", 2600);
+    });
+
+    function moveNo(){
+      const card = overlay.querySelector(".invite");
+      const rect = card.getBoundingClientRect();
+      const btnRect = noBtn.getBoundingClientRect();
+      const maxX = rect.width - btnRect.width - 22;
+      const maxY = rect.height - btnRect.height - 22;
+      const x = 12 + Math.random()*maxX;
+      const y = 12 + Math.random()*maxY;
+      noBtn.style.position = "absolute";
+      noBtn.style.left = x + "px";
+      noBtn.style.top = y + "px";
+    }
+    noBtn.addEventListener("pointerenter", moveNo);
+    noBtn.addEventListener("click", moveNo);
+
+    // Start
+    newGame();
+  </script>
+</body>
+</html>
